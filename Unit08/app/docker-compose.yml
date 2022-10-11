@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_DATABASE: db
+    healthcheck:
+      test: ['CMD-SHELL', 'mysqladmin ping']
+      interval: 10s
+      timeout: 2s
+      retries: 100
+
+  app:
+    image: node:16-alpine
+    command: sh -c "npm install && node app.js"
+    ports:
+      - 8080:8080
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: examplepassword
+      MYSQL_DB: db
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
