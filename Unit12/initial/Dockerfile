@@ -1,4 +1,4 @@
-FROM openjdk:18 as builder
+FROM openjdk:18 AS builder
 
 COPY . /tmp
 WORKDIR /tmp
